@@ -1,14 +1,11 @@
-# Sử dụng image Java chính thức làm nền tảng
-FROM openjdk:11-jre-slim
+# Bắt đầu từ image nginx
+FROM nginx:latest
 
-# Thiết lập thư mục làm việc trong container
-WORKDIR /app
+# Sao chép các file HTML và tài nguyên vào container
+COPY ./ /usr/share/nginx/html/
 
-# Sao chép tệp JAR vào container
-COPY target/my-app.jar /app/my-app.jar
+# Mở cổng 80 để truy cập
+EXPOSE 80
 
-# Cấu hình cổng mà ứng dụng sẽ lắng nghe
-EXPOSE 8080
-
-# Chạy ứng dụng
-CMD ["java", "-jar", "my-app.jar"]
+# Chạy nginx trong chế độ foreground
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"  # Trỏ cổng 8080 của máy chủ đến cổng 80 của container
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
