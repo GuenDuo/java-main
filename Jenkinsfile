@@ -19,7 +19,8 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo '📥 Lấy source code từ GitHub'
-                git branch: 'main', url: "${env.GITHUB_REPO}"
+                // Đảm bảo rằng refspec đúng và branch được chỉ định rõ ràng
+                git branch: 'main', url: "${env.GITHUB_REPO}", refspec: '+refs/heads/main:refs/remotes/origin/main'
             }
         }
 
@@ -75,7 +76,7 @@ pipeline {
         stage('Deploy on Remote Server') {
             steps {
                 echo '🚀 Deploy lên server qua SSH'
-                sshagent(['${DEPLOY_SSH_KEY}']) {
+                sshagent([DEPLOY_SSH_KEY]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} 'cd ${REMOTE_PATH} && git pull && docker-compose up -d --build'
                     """
