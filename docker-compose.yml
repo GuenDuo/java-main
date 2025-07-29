@@ -1,13 +1,10 @@
-version: '3'
-
+version: '3.7'
 services:
   web:
-    build: .
+    image: trienkhai_cuoiky
+    container_name: trienkhai_cuoiky
     ports:
-      - "8080:80"  # Trỏ cổng 8080 của máy chủ đến cổng 80 của container
-    networks:
-      - mynetwork
-
-networks:
-  mynetwork:
-    driver: bridge
+      - "8080:80"
+    environment:
+      - ENV_VAR=value
+    restart: always
