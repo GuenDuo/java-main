@@ -19,7 +19,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo '📥 Lấy source code từ GitHub'
-                // Đảm bảo rằng refspec đúng và branch được chỉ định rõ ràng
+                // Sửa lại refspec
                 git branch: 'main', url: "${env.GITHUB_REPO}", refspec: '+refs/heads/main:refs/remotes/origin/main'
             }
         }
