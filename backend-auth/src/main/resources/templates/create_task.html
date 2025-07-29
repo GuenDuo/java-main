@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Create Task | AProjectO</title>
+    <style>
+        body {
+            background: #f5f9ff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+        }
+        .header {
+            width: 100vw;
+            height: 68px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px #0001;
+            padding: 0 34px 0 26px;
+            position: fixed;
+            left: 0; top: 0; right: 0;
+            z-index: 2;
+        }
+        .logo-header {
+            height: 34px;
+            width: 34px;
+            object-fit: contain;
+        }
+        .logo-text {
+            font-size: 23px;
+            font-weight: bold;
+            color: #175fa2;
+            margin-left: 8px;
+        }
+        .header .search-box {
+            margin-left: 50px;
+            flex: 1;
+        }
+        .header .search-box input {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid #dbe2ea;
+            min-width: 270px;
+            font-size: 15px;
+            background: #f7fafd;
+        }
+        .header-right {
+            display: flex; align-items: center; gap: 17px;
+        }
+        .user-info-header {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .user-info-header img {
+            border-radius: 50%; width: 34px; height: 34px;
+        }
+        .user-info-header .name { font-weight: 500;}
+        .user-info-header .loc { color: #777; font-size: 13px; }
+
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            min-height: calc(100vh - 68px);
+            position: fixed;
+            left: 0; top: 68px; bottom: 0;
+            box-shadow: 2px 0 16px #0001;
+            padding-top: 32px;
+            z-index: 1;
+        }
+        .sidebar ul { list-style: none; padding: 0 0 0 18px; }
+        .sidebar ul li { margin-bottom: 17px; }
+        .sidebar ul li a {
+            text-decoration: none; color: #333; font-size: 16px; padding: 8px 18px;
+            display: flex; align-items: center; border-radius: 7px; transition: background 0.2s;
+            gap: 12px;
+        }
+        .sidebar ul li a.active, .sidebar ul li a:hover {
+            background: #e3edfa; color: #1565c0;
+        }
+        .sidebar ul li a i {
+            font-style: normal; font-size: 20px; color: #a5b7cd;
+        }
+
+        .main {
+            margin-left: 220px;
+            margin-top: 68px;
+            padding: 44px 44px 44px 44px;
+        }
+        .page-title {
+            font-size: 1.45rem;
+            color: #6173a3;
+            font-weight: bold;
+            margin-bottom: 30px;
+            letter-spacing: 0.2px;
+        }
+        .form-task {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 6px 32px #e5edfa;
+            padding: 36px 38px 34px 38px;
+            max-width: 1100px;
+        }
+        .form-row { display: flex; gap: 24px; margin-bottom: 20px; }
+        .form-group { flex: 1; display: flex; flex-direction: column;}
+        .form-group label {
+            font-weight: 600; color: #223460; margin-bottom: 6px; font-size: 16px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            border: 1.4px solid #e2e7ee; border-radius: 8px; padding: 10px 13px;
+            font-size: 16px; background: #f7fafd; margin-bottom: 0; transition: border 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border: 1.7px solid #4098ff; outline: none;
+        }
+        textarea { min-height: 66px; resize: vertical; }
+        .form-group.full { flex: 1 1 100%; }
+        .form-section-bottom { display: flex; align-items: flex-end; gap: 22px; margin-top: 8px;}
+        .form-group.assign { min-width: 220px; }
+        .form-group.priority { min-width: 170px; }
+        .form-group.status { min-width: 200px; }
+        .priority-tag, .status-tag {
+            display: inline-block;
+            background: #feecec;
+            color: #d70020;
+            border-radius: 16px;
+            font-size: 15px;
+            padding: 5px 16px;
+            font-weight: 500;
+            margin-right: 7px;
+            margin-bottom: 4px;
+            border: 1px solid #ffd6db;
+            cursor: pointer;
+        }
+        .status-tag {
+            background: #fff4eb;
+            color: #ff8900;
+            border: 1px solid #ffd3b0;
+        }
+        .priority-tag .remove, .status-tag .remove {
+            font-weight: bold;
+            margin-left: 8px;
+            color: #bc1b1b;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 18px;
+            margin-top: 38px;
+        }
+        .btn {
+            padding: 11px 32px; border: none; border-radius: 7px; font-size: 17px; cursor: pointer;
+            font-weight: 500; transition: background 0.15s;
+        }
+        .btn-create { background: #1976ed; color: #fff; }
+        .btn-create:hover { background: #0853a8; }
+        .btn-secondary { background: #eaf1fd; color: #237aff; }
+        .btn-secondary:hover { background: #c3dafc; }
+        @media (max-width: 1000px) {
+            .form-row, .form-section-bottom { flex-direction: column; }
+            .form-task { padding: 18px 8px; }
+            .main { margin-left: 0;}
+            .sidebar { width: 100%; min-height: unset;}
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <img src="/static/logo.png" alt="Logo" class="logo-header"/>
+    <span class="logo-text">AProjectO</span>
+    <div class="search-box">
+        <input type="text" placeholder="Search for anything..."/>
+    </div>
+    <div class="header-right">
+        <span style="font-size:20px;color:#b6c3da;cursor:pointer;">🔔</span>
+        <div class="user-info-header">
+            <span class="name">Anima Agrawal</span>
+            <span class="loc">U.P, India</span>
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar"/>
+        </div>
+    </div>
+</div>
+<div class="sidebar">
+    <ul>
+        <li><a href="#" class="active"><i>🏗️</i> Project</a></li>
+        <li><a href="#"><i>📝</i> Tasks</a></li>
+        <li><a href="#"><i>📋</i> Work Logs</a></li>
+        <li><a href="#"><i>💹</i> Performance</a></li>
+        <li><a href="#"><i>⚙️</i> Settings</a></li>
+    </ul>
+</div>
+<div class="main">
+    <div class="page-title">Tasks / Create Tasks</div>
+    <form class="form-task">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="taskTitle">Task Title</label>
+                <input type="text" id="taskTitle" name="taskTitle" required />
+            </div>
+            <div class="form-group">
+                <label for="taskType">Task Type</label>
+                <input type="text" id="taskType" name="taskType" />
+            </div>
+            <div class="form-group">
+                <label for="taskStartDate">Task Start Date</label>
+                <input type="date" id="taskStartDate" name="taskStartDate" />
+            </div>
+            <div class="form-group">
+                <label for="taskEndDate">Task End Date</label>
+                <input type="date" id="taskEndDate" name="taskEndDate" />
+            </div>
+        </div>
+        <div class="form-group full" style="margin-bottom:18px;">
+            <label for="taskDescription">Task Description</label>
+            <textarea id="taskDescription" name="taskDescription"></textarea>
+        </div>
+        <div class="form-section-bottom">
+            <div class="form-group assign">
+                <label for="assignTo">Assign to</label>
+                <select id="assignTo" name="assignTo">
+                    <option>Yash Ghori</option>
+                    <option>Thanh</option>
+                    <option>Huong</option>
+                </select>
+            </div>
+            <div class="form-group priority">
+                <label>Priority</label>
+                <span class="priority-tag">High <span class="remove">&times;</span></span>
+            </div>
+            <div class="form-group status">
+                <label>Task Assigning</label>
+                <span class="status-tag">Pending <span class="remove">&times;</span></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-create">Create</button>
+            <button type="button" class="btn btn-secondary">Delete</button>
+        </div>
+    </form>
+</div>
+<script>
+    // Hàm lấy projectId từ URL (?projectId=xxx)
+    function getProjectId() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("projectId"); // Đã fix lại cho đúng key
+    }
+
+    document.querySelector('.form-task').onsubmit = async function(e) {
+        e.preventDefault();
+
+        // Lấy dữ liệu từ form
+        const name = document.getElementById('taskTitle').value;
+        const type = document.getElementById('taskType').value;
+        const description = document.getElementById('taskDescription').value;
+        const startDate = document.getElementById('taskStartDate').value;
+        const endDate = document.getElementById('taskEndDate').value;
+        const assignTo = document.getElementById('assignTo').value;
+        const status = "Pending";
+        const projectId = getProjectId(); // Lấy projectId
+
+        // Kiểm tra nếu thiếu projectId thì báo lỗi
+        if (!projectId) {
+            alert('Không tìm thấy projectId!');
+            return;
+        }
+
+        // Chuẩn bị dữ liệu gửi lên backend
+        const payload = {
+            name,
+            type,
+            description,
+            startDate,
+            endDate,
+            assignee: assignTo,
+            status,
+            projectId   // Thêm projectId vào payload
+        };
+
+        const token = localStorage.getItem('token');
+        const apiUrl = "http://localhost:8181/api/tasks";
+
+        try {
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert('Tạo task thành công!');
+                // Quay lại trang task list của project này
+                window.location.href = 'task.html?projectId=' + projectId;
+            } else {
+                const err = await res.text();
+                alert('Lỗi tạo task: ' + err);
+            }
+        } catch (e) {
+            alert('Lỗi kết nối server!');
+        }
+    };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Employee | Admin</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7faff;
+            margin: 0;
+        }
+        .header {
+            width: 100%;
+            height: 70px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px #0001;
+            padding: 0 36px;
+            position: fixed;
+            left: 0; top: 0; right: 0;
+        }
+        .header .logo-text {
+            font-size: 26px;
+            font-weight: bold;
+            color: #175fa2;
+        }
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            min-height: calc(100vh - 70px);
+            position: fixed;
+            left: 0; top: 70px; bottom: 0;
+            padding-top: 32px;
+            box-shadow: 2px 0 16px #0001;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0 0 0 18px;
+        }
+        .sidebar ul li {
+            margin-bottom: 18px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            padding: 8px 18px;
+            display: block;
+            border-radius: 6px;
+        }
+        .main {
+            margin-left: 220px;
+            margin-top: 70px;
+            padding: 36px 38px;
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 16px #0001;
+            border-radius: 8px;
+            width: 80%;
+            margin: 0 auto;
+        }
+        .form-container input, .form-container select {
+            margin-bottom: 20px;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        .form-container label {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .upload-photo {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            justify-content: flex-start;
+        }
+        .upload-photo img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .save-btn {
+            padding: 12px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="logo-text">AProjectO</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <ul>
+        <li><a href="#">Project</a></li>
+        <li><a href="#">Tasks</a></li>
+        <li><a href="#">Work Logs</a></li>
+        <li><a href="#">Performance</a></li>
+        <li><a href="#">Settings</a></li>
+    </ul>
+</div>
+
+<!-- Main content -->
+<div class="main">
+    <div class="form-container">
+        <h2>Add Employee</h2>
+
+        <!-- Add Employee Form -->
+        <form id="addEmployeeForm" autocomplete="off">
+            <div>
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Enter First Name" required />
+            </div>
+            <div>
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Enter Last Name" required />
+            </div>
+            <div>
+                <label for="phoneNumber">Phone No.</label>
+                <input type="text" id="phoneNumber" name="phoneNumber"
+                       pattern="^0\d{9}$" maxlength="10"
+                       title="Số điện thoại phải bắt đầu từ số 0" required />
+            </div>
+
+            <!-- Thêm Email -->
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter Email" required />
+            </div>
+
+            <div>
+                <label for="createdDate">Created Date</label>
+                <input type="date" id="createdDate" name="createdDate" required />
+            </div>
+            <div>
+                <label for="designation">Designation</label>
+                <select id="designation" name="designation" required>
+                    <option value="UI Intern">UI Intern</option>
+                    <option value="UI Developer">UI Developer</option>
+                    <!-- Add more designations as needed -->
+                </select>
+            </div>
+            <div>
+                <label for="department">Department</label>
+                <select id="department" name="department" required>
+                    <option value="PDT">PDT</option>
+                    <option value="HR">HR</option>
+                    <!-- Add more departments as needed -->
+                </select>
+            </div>
+            <div>
+                <label for="createdBy">Created By</label>
+                <select id="createdBy" name="createdBy" required>
+                    <option value="Yash Ghori">Yash Ghori</option>
+                    <!-- Add more users as needed -->
+                </select>
+            </div>
+
+            <div class="upload-photo">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile Image" />
+                <button type="button">Upload Photo</button>
+            </div>
+
+            <button type="submit" class="save-btn">Save</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('addEmployeeForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const token = localStorage.getItem('token');
+        const employeeData = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            email: document.getElementById('email').value, // Thêm email ở đây
+            createdDate: document.getElementById('createdDate').value,
+            designation: document.getElementById('designation').value,
+            department: document.getElementById('department').value,
+            createdBy: document.getElementById('createdBy').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:8181/api/admin/add-employee', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': 'Bearer ' + token })
+                },
+                body: JSON.stringify(employeeData)
+            });
+
+            if (response.ok) {
+                alert('Employee added successfully!');
+                window.location.href = 'list_employee.html';
+            } else {
+                const errMsg = await response.text();
+                alert('Error: ' + errMsg);
+            }
+        } catch (error) {
+            alert('Error: ' + error);
+        }
+    });
+
+</script>
+
+</body>
+</html>

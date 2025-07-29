@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+        }
+
+        .header {
+            background: #f3f3f3;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .left,
+        .header .right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header .left img,
+        .header .right img {
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .header .left span,
+        .header .right span {
+            font-size: 18px;
+            color: #0a2b51;
+            font-weight: bold;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 80px); /* trừ phần header */
+        }
+
+        .left {
+            flex: 1;
+            background: #eef2fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left img {
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .right {
+            flex: 1;
+            padding: 80px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center; /* căn giữa nội dung */
+        }
+
+        .right h1,
+        .right p,
+        .signup {
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        form {
+            width: 100%;
+            max-width: 350px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: black;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .signup {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .signup a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="left">
+        <img src="/images/logo-left.png" alt="logo">
+        <span>AProjectO</span>
+    </div>
+    <div class="right">
+        <img src="/images/star-icon.png" alt="star">
+        <span>Asite Product System</span>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="container">
+    <div class="left">
+        <img th:src="@{/images/login-illustration.png}" alt="login image"/>
+    </div>
+    <div class="right">
+        <h1>Welcome back, Yash</h1>
+        <p>Welcome back! Please enter your details.</p>
+
+        <form id="loginForm">
+            <input type="text" id="username" name="username" placeholder="Username" required/>
+            <input type="password" id="password" name="password" placeholder="Password" required/>
+
+            <div class="form-footer">
+                <label><input type="checkbox"/> Terms & Conditions</label>
+                <a href="#" style="text-decoration:none; color:#555;">Forgot Password</a>
+            </div>
+
+            <button type="submit">Log in</button>
+        </form>
+
+        <!-- Error message -->
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="signup">
+            Don't have an account? <a href="register.html">Sign up for free</a>
+        </div>
+
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();  // Ngăn chặn form gửi yêu cầu mặc định
+
+        // Lấy giá trị từ form
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Tạo đối tượng chứa thông tin đăng nhập
+        const loginData = { username, password };
+
+        // Gửi yêu cầu POST đến backend
+        const res = await fetch('http://localhost:8181/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(loginData)  // Gửi username và password dưới dạng JSON
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            console.log(data);  // Log dữ liệu phản hồi từ server
+            // Lưu token và role vào localStorage
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("role", data.role);
+            window.location = "dashboard.html";  // Chuyển hướng đến trang projects
+        } else {
+            document.getElementById("errorMsg").innerText = "Sai tên đăng nhập hoặc mật khẩu!";
+        }
+
+    });
+</script>
+
+</body>
+</html>

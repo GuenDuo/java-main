@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tasks | Project Management</title>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+<h1>Tasks</h1>
+<form id="createTaskForm">
+    <input type="text" id="taskName" placeholder="Task Name" required>
+    <input type="text" id="taskDescription" placeholder="Description" required>
+    <button type="submit">Add Task</button>
+</form>
+
+<div id="taskList">
+    <!-- Tasks will be listed here -->
+</div>
+
+<script>
+    // Fetch tasks from API and display them
+    async function fetchTasks() {
+        const res = await fetch('http://localhost:8181/api/tasks', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token') // Get token from localStorage
+            }
+        });
+
+        if (res.ok) {
+            const tasks = await res.json();
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = ''; // Clear existing tasks
+
+            tasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.innerHTML = `<div>
+                        <h3>${task.name}</h3>
+                        <p>${task.description}</p>
+                        <button onclick="deleteTask(${task.id})">Delete</button>
+                    </div>`;
+                taskList.appendChild(taskDiv);
+            });
+        } else {
+            console.error('Failed to load tasks');
+        }
+    }
+
+    // Add task to database
+    document.getElementById('createTaskForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const task = {
+            name: document.getElementById('taskName').value,
+            description: document.getElementById('taskDescription').value
+        };
+
+        const res = await fetch('http://localhost:8181/api/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token') // Pass the token to backend
+            },
+            body: JSON.stringify(task)
+        });
+
+        if (res.ok) {
+            fetchTasks(); // Reload the task list
+        } else {
+            console.error('Error creating task');
+        }
+    });
+
+    // Delete task
+    async function deleteTask(id) {
+        const res = await fetch(`http://localhost:8181/api/tasks/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token') // Pass token to backend
+            }
+        });
+
+        if (res.ok) {
+            fetchTasks(); // Reload the task list
+        } else {
+            console.error('Error deleting task');
+        }
+    }
+
+    // Fetch tasks when page loads
+    window.onload = fetchTasks;
+</script>
+</body>
+</html>

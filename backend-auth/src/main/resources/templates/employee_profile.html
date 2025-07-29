@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Profile | Project Management</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            background: #f7faff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+        }
+
+        .header {
+            width: 100vw;
+            height: 70px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px #0001;
+            padding: 0 36px 0 30px;
+            position: fixed;
+            left: 0; top: 0; right: 0;
+            z-index: 2;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-header {
+            height: 38px;
+            width: 38px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: bold;
+            color: #175fa2;
+            letter-spacing: 0.5px;
+        }
+
+        .search-box {
+            margin-left: 60px;
+        }
+
+        .search-box input {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            min-width: 260px;
+            font-size: 15px;
+        }
+
+        .user-info {
+            margin-left: auto;
+            display: flex; align-items: center; gap: 14px;
+        }
+
+        .user-info img {
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            min-height: calc(100vh - 70px);
+            position: fixed;
+            left: 0; top: 70px; bottom: 0;
+            box-shadow: 2px 0 16px #0001;
+            padding-top: 32px;
+            z-index: 1;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0 0 0 18px;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 18px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            padding: 8px 18px;
+            display: block;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .sidebar ul li a.active, .sidebar ul li a:hover {
+            background: #e3edfa;
+            color: #1565c0;
+        }
+
+        .main {
+            margin-left: 220px;
+            margin-top: 70px;
+            padding: 36px 38px;
+        }
+
+        .profile-info {
+            display: flex;
+            gap: 30px;
+        }
+
+        .profile-info .left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-info .left img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .profile-info .left h2 {
+            font-size: 22px;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .profile-info .left p {
+            font-size: 14px;
+            color: #777;
+            margin: 5px 0;
+        }
+
+        .profile-info .right {
+            flex: 2;
+        }
+
+        .profile-info .right h3 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #18376d;
+            margin-bottom: 20px;
+        }
+
+        .profile-info .right .form-group {
+            margin-bottom: 20px;
+        }
+
+        .profile-info .right .form-group label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .profile-info .right .form-group input,
+        .profile-info .right .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .profile-info .right .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-info .right .form-footer button {
+            padding: 12px 24px;
+            background: #008cba;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .profile-info .right .form-footer button:hover {
+            background: #0079a1;
+        }
+
+        /* Worked with Section */
+        .worked-with {
+            margin-top: 40px;
+        }
+
+        .worked-with .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #18376d;
+            margin-bottom: 12px;
+        }
+
+        .worked-with .worked-with-cards {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .worked-with .worked-with-cards .card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f1f5f8;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .worked-with .worked-with-cards .card img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+        }
+
+        .worked-with .worked-with-cards .card span {
+            font-size: 14px;
+            color: #333;
+        }
+        .profile-info .left {
+            visibility: hidden; /* Ẩn phần thông tin mặc định */
+            opacity: 0;         /* Đảm bảo phần tử không hiển thị */
+            transition: opacity 0.5s ease-in-out; /* Thêm hiệu ứng mượt mà khi hiển thị */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+        <img src="/static/logo.png" alt="Logo" class="logo-header"/>
+        <span class="logo-text">AProjectO</span>
+    </div>
+    <div class="search-box">
+        <input type="text" placeholder="Search for anything..."/>
+    </div>
+    <div class="user-info">
+        <span style="font-weight: 500;">Anima Agrawal</span>
+        <span style="font-size: 13px; color: #777;">U.P, India</span>
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar"/>
+    </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <ul>
+        <li><a href="#">Project</a></li>
+        <li><a href="#">Tasks</a></li>
+        <li><a href="#">Work Logs</a></li>
+        <li><a href="#">Performance</a></li>
+        <li><a href="#">Settings</a></li>
+    </ul>
+</div>
+
+<!-- Main content -->
+<div class="main">
+    <div class="dashboard-title">Admin Profile</div>
+
+    <div class="profile-info">
+        <!-- Left part: User Profile -->
+        <div class="left">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Profile"/>
+            <h2>Yash Ghori</h2>
+            <p>Ahemdabad, Gujarat, India</p>
+            <p>UI - Intern</p>
+            <p>on-teak</p>
+            <p>Phone: +91 7048144030</p>
+            <p>Email: yghori@asite.com</p>
+        </div>
+
+        <!-- Right part: Edit Profile -->
+        <div class="right">
+            <h3>Edit Profile</h3>
+            <form>
+                <div class="form-group">
+                    <label for="first-name">First Name</label>
+                    <input type="text" id="first-name" name="first-name" value="Yash" />
+                </div>
+
+                <div class="form-group">
+                    <label for="last-name">Last Name</label>
+                    <input type="text" id="last-name" name="last-name" value="Ghori" />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="yghori@asite.com" />
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone" value="+234 8023456789" />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" value="Change Password" />
+                </div>
+
+                <div class="form-group">
+                    <label for="designation">Designation</label>
+                    <select id="designation" name="designation">
+                        <option value="UI Intern" selected>UI Intern</option>
+                        <option value="UI Developer">UI Developer</option>
+                        <option value="Frontend Developer">Frontend Developer</option>
+                    </select>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Worked with Section -->
+    <div class="worked-with">
+        <div class="section-title">
+            Worked with
+            <span><a href="#">View all</a></span>
+        </div>
+
+        <div class="worked-with-cards">
+            <div class="card">
+                <img src="https://randomuser.me/api/portraits/men/0.jpg" alt="Addodlle">
+                <span>Addodlle</span>
+            </div>
+            <div class="card">
+                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Marketplace">
+                <span>Marketplace</span>
+            </div>
+            <div class="card">
+                <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Von Dracula">
+                <span>Von Dracula</span>
+            </div>
+            <div class="card">
+                <img src="https://randomuser.me/api/portraits/men/3.jpg" alt="John Joestar">
+                <span>John Joestar</span>
+            </div>
+            <div class="card">
+                <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="Akali Jin">
+                <span>Akali Jin</span>
+            </div>
+            <div class="card">
+                <img src="https://randomuser.me/api/portraits/men/5.jpg" alt="Kayn Vampyr">
+                <span>Kayn Vampyr</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.onload = async function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const employeeId = urlParams.get('id');
+
+        if (employeeId) {
+            // Gọi API để lấy thông tin nhân viên
+            const response = await fetch('http://localhost:8181/api/admin/employee/' + employeeId);
+            if (!response.ok) {
+                console.error('Error fetching employee data:', response);
+                return;
+            }
+
+            const employee = await response.json();
+
+            // Hiển thị phần thông tin khi dữ liệu đã được tải
+            const profileLeft = document.querySelector('.profile-info .left');
+            profileLeft.style.display = 'block';  // Hiển thị phần thông tin
+
+            // Cập nhật thông tin nhân viên vào DOM
+            document.querySelector('.profile-info .left img').src = employee.avatar || 'https://randomuser.me/api/portraits/men/32.jpg';
+            document.querySelector('.profile-info .left h2').textContent = employee.firstName + ' ' + employee.lastName;
+            document.querySelector('.profile-info .left p:nth-child(3)').textContent = employee.designation || 'Not Assigned';
+            document.querySelector('.profile-info .left p:nth-child(4)').textContent = employee.department || 'Not Assigned';
+            document.querySelector('.profile-info .left p:nth-child(5)').textContent = employee.phoneNumber || 'Not Available';
+            document.querySelector('.profile-info .left p:nth-child(6)').textContent = employee.email || 'Not Available';
+
+            // Cập nhật các input cần điền giá trị
+            document.querySelector('#first-name').value = employee.firstName;
+            document.querySelector('#last-name').value = employee.lastName;
+            document.querySelector('#email').value = employee.email;
+            document.querySelector('#phone').value = employee.phoneNumber;
+            document.querySelector('#designation').value = employee.designation || 'UI Intern';
+        } else {
+            alert('Invalid employee ID');
+        }
+
+        // Xử lý lưu thông tin khi nhấn "Save"
+        const saveButton = document.querySelector('button[type="submit"]');
+        saveButton.addEventListener('click', async function(event) {
+            event.preventDefault(); // Ngừng việc submit form mặc định
+
+            // Lấy dữ liệu từ các input
+            const firstName = document.querySelector('#first-name').value;
+            const lastName = document.querySelector('#last-name').value;
+            const email = document.querySelector('#email').value;
+            const phoneNumber = document.querySelector('#phone').value;
+
+            const designation = document.querySelector('#designation').value;
+
+            const employeeData = {
+                firstName,
+                lastName,
+                email,
+                phoneNumber,
+                designation
+            };
+
+            // Gửi dữ liệu tới API (có thể là PUT hoặc POST tùy vào trường hợp)
+            const apiResponse = await fetch('http://localhost:8181/api/admin/employee/' + employeeId, {
+                method: 'PUT', // Chọn PUT nếu bạn muốn cập nhật nhân viên, hoặc POST nếu thêm mới
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(employeeData),
+            });
+
+            if (apiResponse.ok) {
+                alert('Employee information saved successfully!');
+                window.location.href = 'list_employee.html'; // Redirect về danh sách nhân viên
+            } else {
+                alert('Failed to save employee information.');
+            }
+        });
+    };
+</script>
+
+</body>
+</html>

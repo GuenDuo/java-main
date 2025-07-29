@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+        }
+
+        .header {
+            background: #f3f3f3;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .left,
+        .header .right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header .left img,
+        .header .right img {
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .header .left span,
+        .header .right span {
+            font-size: 18px;
+            color: #0a2b51;
+            font-weight: bold;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .left {
+            flex: 1;
+            background: #eef2fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left img {
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .right {
+            flex: 1;
+            padding: 80px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .right h1,
+        .right p,
+        .signup {
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        form {
+            width: 100%;
+            max-width: 350px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .form-footer {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: black;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .signup {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .signup a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="left">
+        <img src="/images/logo-left.png" alt="logo">
+        <span>AProjectO</span>
+    </div>
+    <div class="right">
+        <img src="/images/star-icon.png" alt="star">
+        <span>Asite Product System</span>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="container">
+    <div class="left">
+        <img src="/images/login-illustration.png" alt="register image"/>
+    </div>
+    <div class="right">
+        <h1>Create an Account</h1>
+        <p>Sign up to get started with AProjectO.</p>
+
+        <form id="registerForm">
+            <input type="text" id="username" name="username" placeholder="Username" required/>
+            <input type="email" id="email" name="email" placeholder="Email" required/>
+            <input type="password" id="password" name="password" placeholder="Password" required/>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required/>
+
+            <div class="form-footer">
+                <label><input type="checkbox" required/> I agree to the Terms & Conditions</label>
+            </div>
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <div class="signup">
+            Already have an account? <a href="/login">Log in</a>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();  // Ngăn chặn form gửi yêu cầu mặc định
+
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Kiểm tra nếu mật khẩu và xác nhận mật khẩu trùng khớp
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        // Tạo đối tượng chứa thông tin đăng ký
+        const registerData = { username, email, password };
+
+        // Gửi yêu cầu POST đến API register
+        const res = await fetch('http://localhost:8181/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(registerData)  // Gửi dữ liệu dưới dạng JSON
+        });
+
+        if (res.ok) {
+            alert("Account created successfully!");
+            window.location = "login.html";  // Chuyển hướng về trang login
+        } else {
+            const errorMsg = await res.text();
+            alert(errorMsg);
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý Project</title>
+</head>
+<body>
+<h2>Danh sách Project</h2>
+<div id="adminPanel" style="display: none;">
+  <h3>Thêm Project mới</h3>
+  <form id="addForm">
+    <input type="text" id="name" placeholder="Tên Project" required>
+    <input type="text" id="description" placeholder="Mô tả" required>
+    <button type="submit">Thêm Project</button>
+  </form>
+</div>
+<table border="1">
+  <thead>
+  <tr>
+    <th>STT</th>
+    <th>Tên Project</th>
+    <th>Mô tả</th>
+    <th>Chọn</th>
+    <th id="actionsTh" style="display: none;">Hành động</th>
+  </tr>
+  </thead>
+  <tbody id="projectList"></tbody>
+</table>
+<script>
+  const token = localStorage.getItem("token");
+  const role = (localStorage.getItem("role") || "").toUpperCase();
+
+  if (!token) {
+    window.location = "login.html";
+  }
+
+  if (role === "ADMIN") {
+    document.getElementById("adminPanel").style.display = "";
+    document.getElementById("actionsTh").style.display = "";
+  }
+
+  let projectData = []; // Lưu danh sách project ở đây để xử lý xóa trên FE cho user
+
+  async function loadProjects() {
+    const res = await fetch("http://localhost:8181/api/projects", {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    projectData = await res.json();
+    renderTable();
+  }
+
+  function renderTable() {
+    const tb = document.getElementById("projectList");
+    tb.innerHTML = "";
+    projectData.forEach((project, idx) => {
+      let row = `<tr>
+                    <td>${idx + 1}</td>
+                    <td>${project.name}</td>
+                    <td>${project.description}</td>
+                    <td><button onclick="chooseProject(${project.id})">Chọn</button></td>`;
+      if (role === "ADMIN") {
+        row += `<td>
+                        <button onclick="deleteProject(${project.id})">Xóa</button>
+                    </td>`;
+      }
+      row += `</tr>`;
+      tb.innerHTML += row;
+    });
+  }
+
+  loadProjects();
+
+  // Thêm project (chỉ admin)
+  if (role === "ADMIN") {
+    document.getElementById("addForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const description = document.getElementById("description").value;
+      const res = await fetch("http://localhost:8181/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ name, description })
+      });
+      if (res.ok) {
+        loadProjects();
+        document.getElementById("addForm").reset();
+      } else {
+        alert("Thêm thất bại!");
+      }
+    }
+  }
+
+  // Xóa project (chỉ admin)
+  async function deleteProject(id) {
+    if (confirm("Chắc chắn xóa?")) {
+      const res = await fetch(`http://localhost:8181/api/projects/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      if (res.ok) loadProjects();
+      else alert("Xóa thất bại!");
+    }
+  }
+
+  // Cả admin và user đều chọn được project
+  function chooseProject(id) {
+    if (role === "ADMIN") {
+      // Admin chọn là xóa thật (hoặc chỉ xóa trên FE tùy ý)
+      deleteProject(id);
+    } else {
+      // User thường: chỉ xóa khỏi giao diện, không gọi API xóa thật
+      projectData = projectData.filter(p => p.id !== id);
+      renderTable();
+    }
+  }
+</script>
+</body>
+</html>

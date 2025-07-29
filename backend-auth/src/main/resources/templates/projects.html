@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects | Project Management</title>
+    <style>
+        body {
+            background: #f7faff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+        }
+
+        /* Header */
+        .header {
+            width: 100vw;
+            height: 70px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px #0001;
+            padding: 0 36px 0 30px;
+            position: fixed;
+            left: 0; top: 0; right: 0;
+            z-index: 2;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-header {
+            height: 38px;
+            width: 38px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: bold;
+            color: #175fa2;
+            letter-spacing: 0.5px;
+        }
+
+        .search-box {
+            margin-left: 60px;
+        }
+
+        .search-box input {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            min-width: 260px;
+            font-size: 15px;
+        }
+
+        .user-info {
+            margin-left: auto;
+            display: flex; align-items: center; gap: 14px;
+        }
+
+        .user-info img {
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            min-height: calc(100vh - 70px);
+            position: fixed;
+            left: 0; top: 70px; bottom: 0;
+            box-shadow: 2px 0 16px #0001;
+            padding-top: 32px;
+            z-index: 1;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0 0 0 18px;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 18px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            padding: 8px 18px;
+            display: block;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .sidebar ul li a.active, .sidebar ul li a:hover {
+            background: #e3edfa;
+            color: #1565c0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: 220px;
+            margin-top: 70px;
+            padding: 36px 38px;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1d2746;
+            margin-bottom: 32px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px #0001;
+            padding: 24px 26px 16px 26px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;  /* Thêm hiệu ứng chuột khi hover */
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px); /* Di chuyển lên */
+            box-shadow: 0 6px 40px rgba(0, 0, 0, 0.2); /* Đổ bóng mạnh hơn khi hover */
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #18376d;
+            margin-bottom: 20px;
+        }
+
+        .section-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e3f2fd;
+            color: #1565c0;
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .create-button {
+            background: #008cba;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .create-button:hover {
+            background: #0079a1;
+        }
+
+        /* Paging */
+        .paging {
+            text-align: center;
+        }
+
+        .paging button {
+            padding: 8px 12px;
+            margin: 0 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .paging button.active {
+            background-color: #008cba;
+            color: white;
+        }
+
+        .paging button:hover {
+            background-color: #0079a1;
+            color: white;
+        }
+
+        @media (max-width: 1000px) {
+            .dashboard-grid { grid-template-columns: 1fr; grid-template-rows: repeat(6, 220px); }
+            .main { margin-left: 0 !important; }
+            .sidebar { position: relative; width: 100%; min-height: unset; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+        <img src="/static/logo.png" alt="Logo" class="logo-header"/>
+        <span class="logo-text">AProjectO</span>
+    </div>
+    <div class="search-box">
+        <input type="text" placeholder="Search for anything..."/>
+    </div>
+    <div class="user-info">
+        <span style="font-weight: 500;">Anima Agrawal</span>
+        <span style="font-size: 13px; color: #777;">U.P, India</span>
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar"/>
+    </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <ul>
+        <li><a href="#" class="active">Projects</a></li>
+        <li><a href="#">Tasks</a></li>
+        <li><a href="#">Work Logs</a></li>
+        <li><a href="list_employee.html">Employees</a></li>
+        <li><a href="#">Settings</a></li>
+    </ul>
+</div>
+
+<!-- Main content -->
+<div class="main">
+    <div class="dashboard-title">Projects</div>
+
+    <!-- Create Button (hiển thị chỉ khi người dùng là ADMIN) -->
+    <a href="javascript:void(0);" id="createButton" class="create-button">Create</a>
+
+    <!-- Projects Grid -->
+    <div class="dashboard-grid" id="projectsGrid">
+        <!-- Project Cards sẽ được chèn vào đây -->
+    </div>
+
+    <!-- Paging -->
+    <div class="paging">
+        <button>Previous</button>
+        <button class="active">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>Next</button>
+    </div>
+</div>
+
+<script>
+    // Kiểm tra role và ẩn nút "Create" nếu người dùng không phải admin
+    window.onload = function() {
+        const role = localStorage.getItem('role');  // Lấy role từ localStorage
+
+        // Ẩn nút "Create" nếu người dùng không phải admin
+        if (role !== 'ADMIN') {
+            document.getElementById('createButton').style.display = 'none';
+        }
+
+        // Fetch và hiển thị các project
+        fetchProjects();
+    };
+
+    // Fetch các project từ API
+    async function fetchProjects() {
+        const res = await fetch('http://localhost:8181/api/projects', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')  // Gửi token cho yêu cầu
+            }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            const projectsGrid = document.getElementById('projectsGrid');
+            projectsGrid.innerHTML = '';  // Xóa nội dung cũ
+
+            // (Bonus) Hiển thị tổng số project trên giao diện, nếu có element này
+            const projectCountBadge = document.getElementById('project-card-count');
+            if (projectCountBadge) {
+                projectCountBadge.textContent = data.length + (data.length === 1 ? " project" : " projects");
+            }
+
+            // Duyệt qua các project và tạo giao diện
+            data.forEach(project => {
+                const projectCard = document.createElement('div');
+                projectCard.className = 'dashboard-card';
+
+                // Đặt màu badge theo status
+                let statusColor = "#e3f2fd"; // mặc định
+                let textColor = "#1565c0";
+                if (project.status === "Completed") {
+                    statusColor = "#4caf50"; textColor = "#fff";
+                } else if (project.status === "Pending") {
+                    statusColor = "#ff9800"; textColor = "#fff";
+                } else if (project.status === "In Progress") {
+                    statusColor = "#2196f3"; textColor = "#fff";
+                }
+
+                // Render nội dung project card
+                projectCard.innerHTML = `
+                <div class="section-title">${project.name}</div>
+                <span class="section-badge" style="background:${statusColor};color:${textColor};">
+                    ${project.status || "No status"}
+                </span>
+            `;
+
+                // Sự kiện click để xem task của project
+                projectCard.addEventListener('click', function() {
+                    window.location.href = `task.html?projectId=${project.id}`;
+                });
+
+                projectsGrid.appendChild(projectCard);
+            });
+        } else {
+            console.error('Failed to load projects');
+        }
+    }
+
+    // Thêm sự kiện khi bấm nút "Create" để chuyển đến trang tạo project
+    document.getElementById('createButton').addEventListener('click', function() {
+        window.location.href = 'create_project.html';  // Chuyển hướng tới trang tạo project
+    });
+
+</script>
+
+</body>
+</html>
