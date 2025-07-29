@@ -1,8 +1,11 @@
-# Chọn image của Node.js hoặc Nginx tùy thuộc vào cách bạn muốn triển khai
-FROM nginx:alpine
+# Sử dụng image Nginx chính thức làm base image
+FROM nginx:latest
 
-# Sao chép các tệp từ thư mục frontend vào thư mục mặc định của Nginx
-COPY ./frontend /usr/share/nginx/html
+# Sao chép file login.html vào thư mục mặc định của Nginx
+COPY ./login.html /usr/share/nginx/html/index.html
 
-# Mở cổng 80 để Nginx có thể phục vụ các tệp tĩnh
+# Mở port 80 cho Nginx
 EXPOSE 80
+
+# Chạy Nginx
+CMD ["nginx", "-g", "daemon off;"]
